@@ -1,10 +1,13 @@
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowUpCircle, ArrowDownCircle, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent, CardTitle } from '../ui/Card';
 import Badge from '../ui/Badge';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 
 const RecentActivity = ({ transactions = [], loading = false, error = null }) => {
+  const navigate = useNavigate();
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -147,7 +150,10 @@ const RecentActivity = ({ transactions = [], loading = false, error = null }) =>
         
         {transactions.length >= 5 && (
           <div className="mt-4 pt-4 border-t border-gray-200">
-            <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+            <button 
+              onClick={() => navigate('/cash-flow')}
+              className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+            >
               View all transactions →
             </button>
           </div>

@@ -118,6 +118,10 @@ const Assets = () => {
 
   const handleFormSubmit = async (data) => {
     try {
+      console.log('handleFormSubmit called with data:', data);
+      console.log('activeTab:', activeTab);
+      console.log('editingAsset:', editingAsset);
+      
       let submitFunction;
       
       if (editingAsset) {
@@ -154,11 +158,17 @@ const Assets = () => {
         }
       }
 
+      console.log('About to call mutate with function:', submitFunction);
+      
       await mutate(submitFunction, {
-        onSuccess: () => {
+        onSuccess: (result) => {
+          console.log('Mutation successful:', result);
           setShowForm(false);
           setEditingAsset(null);
           setRefreshKey(prev => prev + 1);
+        },
+        onError: (error) => {
+          console.error('Mutation error:', error);
         }
       });
     } catch (error) {

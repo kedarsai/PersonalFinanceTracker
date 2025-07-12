@@ -13,7 +13,7 @@ const AssetForm = ({
 }) => {
   const [formData, setFormData] = useState({
     name: asset?.name || '',
-    type: asset?.type || (type === 'investment' ? 'stock' : ''),
+    type: asset?.type || (type === 'investments' ? 'stock' : ''),
     symbol: asset?.symbol || '',
     shares: asset?.shares || '',
     price_per_share: asset?.price_per_share || '',
@@ -60,7 +60,7 @@ const AssetForm = ({
 
     // Type-specific validations
     switch (type) {
-      case 'investment':
+      case 'investments':
         if (!formData.type) newErrors.type = 'Investment type is required';
         if (!formData.total_value || formData.total_value <= 0) {
           newErrors.total_value = 'Total value must be greater than 0';
@@ -101,34 +101,62 @@ const AssetForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    console.log('Form submitted with data:', formData);
+    console.log('Asset type:', type);
+    
     if (!validateForm()) {
+      console.log('Form validation failed with errors:', errors);
       return;
     }
 
     // Clean up form data based on type
-    const cleanedData = { ...formData };
+    let cleanedData = {};
     
-    // Convert numeric fields
-    const numericFields = ['shares', 'price_per_share', 'total_value', 'balance', 'interest_rate', 'current_value', 'purchase_value', 'percentage'];
-    numericFields.forEach(field => {
-      if (cleanedData[field] !== '' && cleanedData[field] !== undefined) {
-        cleanedData[field] = parseFloat(cleanedData[field]);
-      }
-    });
+    // Add common fields
+    cleanedData.name = formData.name;
+    
+    // Add type-specific fields
+    switch (type) {
+      case 'investments':
+        cleanedData.type = formData.type;
+        if (formData.symbol) cleanedData.symbol = formData.symbol;
+        if (formData.shares) cleanedData.shares = parseFloat(formData.shares);
+        if (formData.price_per_share) cleanedData.price_per_share = parseFloat(formData.price_per_share);
+        if (formData.total_value) cleanedData.total_value = parseFloat(formData.total_value);
+        if (formData.purchase_date) cleanedData.purchase_date = formData.purchase_date;
+        break;
+        
+      case 'cash':
+        cleanedData.account_type = formData.account_type;
+        if (formData.balance) cleanedData.balance = parseFloat(formData.balance);
+        if (formData.interest_rate) cleanedData.interest_rate = parseFloat(formData.interest_rate);
+        break;
+        
+      case 'physical':
+        cleanedData.category = formData.category;
+        if (formData.current_value) cleanedData.current_value = parseFloat(formData.current_value);
+        if (formData.purchase_value) cleanedData.purchase_value = parseFloat(formData.purchase_value);
+        if (formData.condition) cleanedData.condition = formData.condition;
+        if (formData.purchase_date) cleanedData.purchase_date = formData.purchase_date;
+        if (formData.notes) cleanedData.notes = formData.notes;
+        break;
+        
+      case 'ownership':
+        cleanedData.business_name = formData.business_name;
+        if (formData.percentage) cleanedData.percentage = parseFloat(formData.percentage);
+        if (formData.current_value) cleanedData.current_value = parseFloat(formData.current_value);
+        if (formData.investment_date) cleanedData.investment_date = formData.investment_date;
+        if (formData.notes) cleanedData.notes = formData.notes;
+        break;
+    }
 
-    // Remove empty fields
-    Object.keys(cleanedData).forEach(key => {
-      if (cleanedData[key] === '' || cleanedData[key] === undefined) {
-        delete cleanedData[key];
-      }
-    });
-
+    console.log('Cleaned data being submitted:', cleanedData);
     onSubmit(cleanedData);
   };
 
   const getTitle = () => {
     const typeNames = {
-      investment: 'Investment',
+      investments: 'Investment',
       cash: 'Cash Account',
       physical: 'Physical Asset',
       ownership: 'Ownership Stake'
@@ -455,24 +483,24 @@ const AssetForm = ({
             <ErrorMessage>{errors.name}</ErrorMessage>
           </FormGroup>
 
-          {type === 'investment' && renderInvestmentFields()}
+          {type === 'investments' && renderInvestmentFields()}
           {type === 'cash' && renderCashFields()}
           {type === 'physical' && renderPhysicalFields()}
           {type === 'ownership' && renderOwnershipFields()}
+
+          <div className="mt-6 pt-4 border-t border-gray-200 flex justify-end space-x-3">
+            <Button variant="outline" type="button" onClick={onClose} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Button 
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Saving...' : (asset ? 'Update' : 'Create')}
+            </Button>
+          </div>
         </form>
       </ModalBody>
-      
-      <ModalFooter>
-        <Button variant="outline" onClick={onClose} disabled={isLoading}>
-          Cancel
-        </Button>
-        <Button 
-          onClick={handleSubmit}
-          disabled={isLoading}
-        >
-          {isLoading ? 'Saving...' : (asset ? 'Update' : 'Create')}
-        </Button>
-      </ModalFooter>
     </Modal>
   );
 };
