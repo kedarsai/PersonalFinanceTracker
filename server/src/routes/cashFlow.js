@@ -1,38 +1,27 @@
 const express = require('express');
 const router = express.Router();
+const cashFlowController = require('../controllers/cashFlowController');
 
 // Income routes
-router.get('/income', (req, res) => {
-  res.json({ message: 'Get income records - to be implemented' });
-});
-
-router.post('/income', (req, res) => {
-  res.json({ message: 'Create income record - to be implemented' });
-});
-
-router.put('/income/:id', (req, res) => {
-  res.json({ message: `Update income record ${req.params.id} - to be implemented` });
-});
-
-router.delete('/income/:id', (req, res) => {
-  res.json({ message: `Delete income record ${req.params.id} - to be implemented` });
-});
+router.get('/income', cashFlowController.getIncome);
+router.get('/income/:id', cashFlowController.getIncomeById);
+router.post('/income', cashFlowController.createIncome);
+router.put('/income/:id', cashFlowController.updateIncome);
+router.delete('/income/:id', cashFlowController.deleteIncome);
 
 // Expense routes
-router.get('/expenses', (req, res) => {
-  res.json({ message: 'Get expense records - to be implemented' });
-});
+router.get('/expenses', cashFlowController.getExpenses);
+router.get('/expenses/:id', cashFlowController.getExpenseById);
+router.post('/expenses', cashFlowController.createExpense);
+router.put('/expenses/:id', cashFlowController.updateExpense);
+router.delete('/expenses/:id', cashFlowController.deleteExpense);
 
-router.post('/expenses', (req, res) => {
-  res.json({ message: 'Create expense record - to be implemented' });
-});
-
-router.put('/expenses/:id', (req, res) => {
-  res.json({ message: `Update expense record ${req.params.id} - to be implemented` });
-});
-
-router.delete('/expenses/:id', (req, res) => {
-  res.json({ message: `Delete expense record ${req.params.id} - to be implemented` });
-});
+// Analysis routes
+router.get('/summary', cashFlowController.getCashFlowSummary);
+router.get('/income/by-category', cashFlowController.getIncomeByCategory);
+router.get('/expenses/by-category', cashFlowController.getExpensesByCategory);
+router.get('/monthly', cashFlowController.getMonthlyCashFlow);
+router.get('/recurring', cashFlowController.getRecurringTransactions);
+router.get('/recent', cashFlowController.getRecentTransactions);
 
 module.exports = router;

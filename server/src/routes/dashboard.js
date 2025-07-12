@@ -1,17 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const dashboardController = require('../controllers/dashboardController');
 
-// Dashboard routes
-router.get('/summary', (req, res) => {
-  res.json({ message: 'Get dashboard summary - to be implemented' });
-});
+// Main dashboard routes
+router.get('/summary', dashboardController.getDashboardSummary);
+router.get('/quick-stats', dashboardController.getQuickStats);
 
-router.get('/networth', (req, res) => {
-  res.json({ message: 'Get net worth history - to be implemented' });
-});
+// Net worth routes
+router.get('/networth', dashboardController.getNetWorthHistory);
+router.post('/networth/snapshot', dashboardController.saveNetWorthSnapshot);
 
-router.get('/cashflow', (req, res) => {
-  res.json({ message: 'Get cash flow summary - to be implemented' });
-});
+// Cash flow overview
+router.get('/cashflow', dashboardController.getCashFlowOverview);
+
+// Goals and planning
+router.get('/goals', dashboardController.getFinancialGoals);
 
 module.exports = router;

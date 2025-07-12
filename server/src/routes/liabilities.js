@@ -1,21 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const liabilityController = require('../controllers/liabilityController');
 
-// Placeholder routes - will be implemented with controllers
-router.get('/', (req, res) => {
-  res.json({ message: 'Get liabilities - to be implemented' });
-});
+// CRUD routes
+router.get('/', liabilityController.getLiabilities);
+router.get('/:id', liabilityController.getLiability);
+router.post('/', liabilityController.createLiability);
+router.put('/:id', liabilityController.updateLiability);
+router.delete('/:id', liabilityController.deleteLiability);
 
-router.post('/', (req, res) => {
-  res.json({ message: 'Create liability - to be implemented' });
-});
-
-router.put('/:id', (req, res) => {
-  res.json({ message: `Update liability ${req.params.id} - to be implemented` });
-});
-
-router.delete('/:id', (req, res) => {
-  res.json({ message: `Delete liability ${req.params.id} - to be implemented` });
-});
+// Summary and analysis routes
+router.get('/summary/overview', liabilityController.getLiabilitySummary);
+router.get('/summary/upcoming-payments', liabilityController.getUpcomingPayments);
+router.get('/summary/payoff-projections', liabilityController.getPayoffProjections);
 
 module.exports = router;
